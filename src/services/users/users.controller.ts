@@ -6,13 +6,13 @@ const TAG_NAME = 'Users';
 const CONTROLLER_NAME = TAG_NAME.toLocaleLowerCase();
 
 @ApiTags(TAG_NAME)
+@ApiBearerAuth()
 @Controller(CONTROLLER_NAME)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @ApiBearerAuth()
   @Get(':id')
-  getProfile(@Param('id', ParseIntPipe) id: number) {
+  getUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findById(id);
   }
 }
