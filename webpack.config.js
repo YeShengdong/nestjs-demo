@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-var-requires, no-param-reassign */
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (options, webpack) => {
@@ -20,6 +20,9 @@ module.exports = (options, webpack) => {
         {
           test: /\.node$/,
           loader: 'node-loader',
+          options: {
+            name: "[path][name].[ext]",
+          },
         },
       ],
     },

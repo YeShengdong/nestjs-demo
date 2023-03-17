@@ -3,11 +3,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 
 const TAG_NAME = 'Users';
-const CONTROLLER_NAME = TAG_NAME.toLocaleLowerCase();
+const CONTROLLER_PATH = TAG_NAME.toLocaleLowerCase();
 
 @ApiTags(TAG_NAME)
 @ApiBearerAuth()
-@Controller(CONTROLLER_NAME)
+@Controller(CONTROLLER_PATH)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

@@ -7,14 +7,12 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  HttpCode,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiTags,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiBadRequestResponse,
   ApiOperation,
@@ -23,11 +21,13 @@ import { ExamplesService } from './examples.service';
 import { ExampleDto, CreateExampleDto, UpdateExampleDto } from './dto';
 
 const TAG_NAME = 'Examples';
-const CONTROLLER_NAME = TAG_NAME.toLocaleLowerCase();
+const CONTROLLER_PATH = TAG_NAME.toLocaleLowerCase();
 
 @ApiTags(TAG_NAME)
 @ApiBearerAuth()
-@Controller(CONTROLLER_NAME)
+@Controller({
+  path: CONTROLLER_PATH,
+})
 export class ExamplesController {
   constructor(private readonly examplesService: ExamplesService) {}
 
@@ -65,8 +65,7 @@ export class ExamplesController {
   }
 
   @ApiOperation({ summary: 'Delete example' })
-  @HttpCode(204)
-  @ApiNoContentResponse({
+  @ApiOkResponse({
     description: 'The record has been successfully removed.',
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })

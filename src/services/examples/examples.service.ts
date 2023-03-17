@@ -1,85 +1,49 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateExampleDto } from './dto/create-example.dto';
 import { UpdateExampleDto } from './dto/update-example.dto';
-import { IExampleData } from './examples';
-
-const generateMockData = (number: number) => {
-  const data = [];
-
-  // eslint-disable-next-line
-  for (let i = 1; i <= number; i++) {
-    const item = {
-      id: i,
-      title: `title-${i}`,
-      description: `description-${i}`,
-    };
-
-    data.push(item);
-  }
-
-  return data;
-};
-
-let currentIdIndex = 10;
-let mockData: IExampleData[] = generateMockData(currentIdIndex);
+import { Example } from './entities';
 
 @Injectable()
 export class ExamplesService {
-  create(createExampleDto: CreateExampleDto) {
-    currentIdIndex += 1;
-    const newRecord = { ...createExampleDto, id: currentIdIndex };
+  constructor(
+    @InjectRepository(Example)
+    private exampleRepository: Repository<Example>,
+  ) {}
 
-    mockData.push(newRecord);
-    return newRecord;
+  create(createExampleDto: CreateExampleDto): Promise<Example> {
+    return this.exampleRepository.save(createExampleDto);
   }
 
-  findAll(): { data: IExampleData[] } {
+  async findAll(): Promise<{ data: Example[] }> {
+    const data = await this.exampleRepository.find();
+
     return {
-      data: mockData,
+      data,
     };
   }
 
-  findOne(id: number): IExampleData {
-    const record = mockData.find(({ id: exampleId }) => exampleId === id);
+  async findOne(id: number): Promise<Example> {
+    const data = await this.exampleRepository.findOneBy({ id });
 
-    if (!record) {
+    if (!data) {
       throw new BadRequestException(40001);
     }
 
-    return record;
+    return data;
   }
 
-  update(id: number, updateExampleDto: UpdateExampleDto): IExampleData {
-    let newRecord: IExampleData | null = null;
+  async update(
+    id: number,
+    updateExampleDto: UpdateExampleDto,
+  ): Promise<Example> {
+    await this.exampleRepository.update({ id }, updateExampleDto);
 
-    mockData = mockData.map((item) => {
-      const { id: exampleId } = item;
-
-      if (exampleId === id) {
-        newRecord = { ...item, ...updateExampleDto };
-
-        return newRecord;
-      }
-
-      return item;
-    });
-
-    if (!newRecord) {
-      throw new BadRequestException();
-    }
-
-    return newRecord;
+    return this.findOne(id);
   }
 
-  remove(id: number): void {
-    const remainingData = mockData.filter(
-      ({ id: exampleId }) => exampleId !== id,
-    );
-
-    if (remainingData.length === mockData.length) {
-      throw new BadRequestException();
-    }
-
-    mockData = remainingData;
+  async remove(id: number): Promise<void> {
+    await this.exampleRepository.delete(id);
   }
 }

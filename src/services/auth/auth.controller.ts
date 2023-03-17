@@ -7,10 +7,10 @@ import { Public } from './constants';
 import { LocalAuthGuard } from './local-auth.guard';
 
 const TAG_NAME = 'Auth';
-const CONTROLLER_NAME = TAG_NAME.toLocaleLowerCase();
+const CONTROLLER_PATH = TAG_NAME.toLocaleLowerCase();
 
 @ApiTags(TAG_NAME)
-@Controller(CONTROLLER_NAME)
+@Controller(CONTROLLER_PATH)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

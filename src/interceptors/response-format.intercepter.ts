@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IResponseFormat } from './response-format';
+import { successCodeMessageMapping } from '../exceptions/code';
 
 @Injectable()
 export class ResponseFormatInterceptor implements NestInterceptor {
@@ -16,13 +16,15 @@ export class ResponseFormatInterceptor implements NestInterceptor {
   ): Observable<IResponseFormat> {
     return next.handle().pipe(
       map((data) => {
-        if (data.code && data.message) {
+        if (data?.code && data?.message) {
           return data;
         }
 
+        const operationSucceededCode = 20001;
+
         return {
-          code: 0,
-          message: '',
+          code: operationSucceededCode,
+          message: successCodeMessageMapping[operationSucceededCode],
           data,
         };
       }),
